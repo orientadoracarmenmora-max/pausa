@@ -1,0 +1,1057 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>PAUSA · Tutoría interactiva</title>
+<style>
+:root{--bg:#f3faf7;--paper:#fff;--ink:#33243a;--muted:#5d4864;--rose:#d9f0e6;--edge:#817087;--accent:#63385e;--scale:1;color-scheme:light;font-size:calc(100% * var(--scale))}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font:1rem/1.55 system-ui,sans-serif}body.serif{font-family:Georgia,serif}body.contrast{--bg:#fff;--paper:#fff;--ink:#151515;--muted:#333;--rose:#f6e5ff;--edge:#383838;--accent:#40145b}
+[hidden]{display:none!important}a{color:var(--accent)}button,select,summary{font:inherit;color:inherit}button,select,.jump{min-height:44px;padding:.42em .8em;background:var(--paper);border:1px solid var(--edge);border-radius:.6rem}button,summary,select{cursor:pointer}button:hover,.jump:hover{background:var(--rose)}:focus-visible{outline:3px solid var(--accent);outline-offset:3px}button:disabled{opacity:.6;cursor:default}
+header{background:var(--paper);border-bottom:1px solid var(--edge)}.shell{max-width:78rem;margin:auto;padding:1rem clamp(1rem,4vw,3rem)}.row,.tools,.steps,.numbers{display:flex;flex-wrap:wrap;gap:.55rem;align-items:center}.row{justify-content:space-between}.brand,.kicker,.label{letter-spacing:.15em;text-transform:uppercase;font-weight:750;font-size:.79rem}.brand{font-size:1.1rem}.tools{margin-top:.65rem}.tools label{display:flex;align-items:center;gap:.4em;flex-wrap:wrap}.tools select{max-width:min(17rem,78vw)}.toolbar-note{margin:.35rem 0;color:var(--muted);font-size:.85rem}.steps{margin:1rem 0}.jump{text-decoration:none;display:inline-flex;align-items:center}.jump[aria-current],.primary,.numbers [aria-pressed=true]{background:var(--accent);color:var(--paper);border-color:var(--accent)}
+.primary:hover{background:var(--ink);color:var(--paper)}
+.slide{border:1px solid var(--edge);border-radius:1.2rem;background:var(--paper);padding:clamp(1rem,4vw,3rem);margin-bottom:1rem}.kicker,.muted{color:var(--muted)}h1,h2{font-family:Georgia,serif;font-weight:normal;line-height:1.08;margin:.35em 0}h1{font-size:clamp(2.2rem,5.6vw,4.7rem)}h2{font-size:clamp(1.8rem,4vw,3.6rem)}.lead{font-size:1.25rem;max-width:62ch}.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,17rem),1fr));gap:1rem;margin:1rem 0}.card,aside,details{border:1px solid var(--edge);border-radius:.7rem;padding:.85rem 1rem}.card p,aside p,details p{margin:.45em 0}.card h3{margin:0}.tint,aside{background:var(--rose)}aside{margin-top:1rem}details{margin:.6rem 0}summary{padding:.35rem 0;font-weight:700;min-height:44px}.numbers button{min-width:44px}.timer{font-size:2rem;font-variant-numeric:tabular-nums;margin:.4em 0}.skip{position:absolute;top:-8rem;left:1rem;background:var(--paper);padding:.7rem;z-index:1}.skip:focus{top:1rem}.print-only{display:none}.sr-only{position:absolute;width:1px;height:1px;padding:0;overflow:hidden;clip-path:inset(50%);white-space:nowrap}.stepper{padding-bottom:1.4rem}.prompt{font-size:1.15rem;font-weight:650}
+.pressure-meter{max-width:54rem;margin:1.25rem 0;padding:clamp(.75rem,3vw,1.6rem);background:var(--pressure-fill,var(--paper));border:1px solid var(--edge);border-radius:1rem}
+.pressure-readout{display:flex;align-items:baseline;gap:.65rem;color:var(--accent)}
+.pressure-value{font:700 clamp(2.75rem,8vw,5rem)/1 system-ui,sans-serif;font-variant-numeric:tabular-nums}
+.pressure-track{display:flex;align-items:center;gap:clamp(.25rem,2vw,1rem);margin:.75rem 0 .25rem}
+.pressure-end{display:grid;place-items:center;flex:none;width:2.75rem;height:2.75rem;border:2px solid var(--accent);border-radius:50%;font-weight:700}
+.pressure-track input{appearance:none;min-width:0;flex:1;height:64px;margin:0;background:transparent;cursor:grab;touch-action:none}
+.pressure-track input:active{cursor:grabbing}
+.pressure-track input::-webkit-slider-runnable-track{height:1.2rem;border-radius:1rem;border:1px solid var(--edge);background:linear-gradient(90deg,var(--rose),var(--accent))}
+.pressure-track input::-moz-range-track{height:1.2rem;border-radius:1rem;border:1px solid var(--edge);background:linear-gradient(90deg,var(--rose),var(--accent))}
+.pressure-track input::-webkit-slider-thumb{appearance:none;width:3rem;height:3rem;margin-top:-.96rem;border:3px solid var(--accent);border-radius:50%;background:var(--paper);box-shadow:0 0 0 2px var(--paper)}
+.pressure-track input::-moz-range-thumb{box-sizing:border-box;width:3rem;height:3rem;border:3px solid var(--accent);border-radius:50%;background:var(--paper);box-shadow:0 0 0 2px var(--paper)}
+.contrast .pressure-meter{background:var(--paper)}
+.pressure-hot{--accent:#a3242b;--rose:#fbd6cb;--edge:#a3242b}
+.pressure-end{position:relative}
+.pressure-flame{position:absolute;bottom:calc(100% + .3rem);left:calc(50% - .825rem);width:1.65rem;height:2rem;fill:currentColor;transform-origin:center bottom;pointer-events:none}
+@media (prefers-reduced-motion:no-preference){
+ .pressure-hot .pressure-flame{animation:flame-sway .8s ease-in-out 4 alternate}
+}
+@keyframes flame-sway{from{transform:rotate(-9deg) scaleY(.94)}to{transform:rotate(9deg) scaleY(1.08)}}
+.pressure-labels{display:flex;justify-content:space-between;gap:1rem;color:var(--muted);font-size:.9rem}
+.pressure-labels span:last-child{text-align:right}
+.pressure-question{text-align:center;font-family:"Segoe Print","Bradley Hand","Chalkboard SE",cursive;font-style:normal;font-size:clamp(1.2rem,2.6vw,1.65rem);font-weight:400}
+.student-quote{font-family:"Segoe Print","Bradley Hand","Chalkboard SE",cursive;font-weight:400;font-size:1.15em}
+.pressure-question strong{font-weight:800}
+@media(forced-colors:active){.pressure-track input{appearance:auto}}
+.lungs-art{display:block;width:min(15rem,100%);margin:1.1rem auto .5rem}
+body:not(.contrast) .lungs-art{--lung-fill:#e5d2e9}
+.lungs-pair{transform-box:fill-box;transform-origin:center}
+@media screen and (prefers-reduced-motion:no-preference){
+ #respirar:not([hidden]) .lungs-pair{animation:lungs-breath 8s ease-in-out 2}
+}
+@keyframes lungs-breath{0%,100%{transform:scale(.9)}50%{transform:scale(1.06)}}
+@media screen{
+ #pausa :is(p:not(.kicker,.breath-phase,.timer),li,summary,.breath-controls){font-family:"Avenir Next","Trebuchet MS",sans-serif;font-size:1.1rem}
+ #pausa :is(p:not(.kicker,.breath-phase,.timer),li){max-width:72ch}
+ body.accessible-font #pausa :is(p:not(.kicker,.breath-phase,.timer),li,summary,.breath-controls){font-family:var(--selected-font),sans-serif}
+}
+@media screen and (min-width:42rem){
+ #pausa :is(p:not(.kicker,.breath-phase,.timer),li){text-align:justify;hyphens:auto}
+}
+.breath-guide{display:grid;justify-items:center;gap:.5rem;margin:1rem 0}
+.breath-ring{position:relative;display:grid;place-items:center;width:min(25rem,100%);aspect-ratio:1;border:2px solid var(--edge);border-radius:50%;background:var(--paper)}
+.breath-disc{width:92%;aspect-ratio:1;border-radius:50%;background:var(--breath-fill,var(--rose));border:3px solid var(--accent);transform:scale(var(--breath-scale,.48));transition:transform .12s linear}
+.breath-phase{position:absolute;inset:0;display:grid;place-items:center;margin:0;font-size:1.15rem;font-weight:750;text-align:center}
+.breath-controls{justify-content:center;margin-top:1.15rem;margin-bottom:1.35rem}.breath-controls #startTimer{font-weight:750;padding:.6rem 1.2rem}.breath-clock{text-align:center}
+.slide-credit{margin-top:1.35rem;font-size:.78rem}.presentation-credit{margin:0 0 .65rem;text-align:left;font-size:.78rem}.cover{min-height:clamp(19rem,52vh,34rem);display:grid;align-content:center}.cover h1{color:var(--accent);font-family:"Avenir Next","Trebuchet MS",system-ui,sans-serif;font-weight:850;font-size:clamp(3rem,11vw,8rem);letter-spacing:-.065em;line-height:.9;margin:.25em 0 .18em}.cover h2{margin-top:0}
+.cover{position:relative;overflow:hidden;padding-top:clamp(5rem,13vw,8rem)}
+.cover-target{position:relative}
+.cover-signature{font-size:.8rem;text-align:left;color:var(--accent);margin-top:.25rem;overflow-wrap:anywhere}
+.paper-flight{--plane-width:clamp(6.5rem,20vw,16rem);position:absolute;left:calc(100% + .45rem - var(--plane-width) * .055);top:calc(48% - var(--plane-width) * .568);width:var(--plane-width);height:auto;pointer-events:none}
+.paper-flight .trail{fill:none;stroke:var(--accent);stroke-width:2.2;stroke-dasharray:2 6;opacity:.72;stroke-linecap:round}
+.paper-flight .plane{stroke:var(--accent);stroke-width:1.7;stroke-linejoin:round}
+.perfection-target{display:grid;justify-items:center;gap:.35rem;margin:1rem auto}
+@media screen{
+ .perfection-intro{display:grid;grid-template-columns:minmax(0,1fr) minmax(10rem,17rem);align-items:start;gap:clamp(1.25rem,4vw,3rem);margin-bottom:1.5rem}
+ #exigencia .perfection-target{gap:.65rem;margin:0}
+ @media(max-width:42rem){.perfection-intro{grid-template-columns:1fr;gap:1rem}}
+
+ #exigencia .prompt{margin-bottom:1.25rem}
+ .perfection-intro .perfection-lead{margin:1.25rem 0 0;font-family:"Avenir Next","Trebuchet MS",sans-serif}
+ .perfection-intro h2 + .perfection-lead{margin-top:1.8rem}
+ .perfection-intro .perfection-lead + .perfection-lead{margin-top:1.9rem}
+ .perfection-example{display:block;margin-top:1rem;font-family:"Trebuchet MS",sans-serif}
+ .perfection-prompt{display:block;text-align:left;font-family:"Avenir Next","Trebuchet MS",sans-serif;font-size:clamp(1.35rem,3vw,1.8rem);margin-bottom:.35rem}
+ #exigencia .comparison{gap:clamp(1rem,3vw,1.75rem)}
+}
+.perfection-target svg{width:min(100%,15rem);height:auto;overflow:hidden}
+.perfection-target figcaption{font-size:1rem}
+body:not(.contrast) .perfection-target{--target-mint:#e2f6eb;--target-white:#fff;--target-arrow:#63385e}
+@media screen and (prefers-reduced-motion:no-preference){
+ #exigencia:not([hidden]) .target-arrows path{animation:target-flight .72s cubic-bezier(.45,.1,.8,.95) both;animation-delay:var(--flight-delay)}
+ .target-arrows path:nth-child(1){--flight-delay:.45s;--flight-y:-32px}
+ .target-arrows path:nth-child(2){--flight-delay:1.35s;--flight-y:-6px}
+ .target-arrows path:nth-child(3){--flight-delay:2.25s;--flight-y:24px}
+}
+@keyframes target-flight{from{transform:translate(80px,var(--flight-y));opacity:0}20%{opacity:1}to{transform:translate(0,0);opacity:1}}
+.automatic-heading{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:.65rem;align-items:center}
+body:not(.contrast) .automatic-heading svg{--thought-plane-fill:#e7cfe8;--thought-plane-fold:#c995ba}
+.thought-trail{fill:none;stroke:var(--accent);stroke-width:1.7;stroke-linecap:round;stroke-dasharray:3 5;opacity:.75}
+.automatic-heading svg{width:clamp(4.5rem,13vw,9rem);height:auto}
+@media print{.automatic-heading{display:block}.automatic-heading svg{display:none}}
+.thought-illustration{display:flex;align-items:center;justify-content:center;gap:.85rem;margin:1rem 0}
+.thought-illustration p{margin:0}.thought-caption{margin-top:1.8rem}.violet-highlight{text-decoration:underline;text-decoration-color:#e6d5ed;text-decoration-thickness:.18em;text-underline-offset:.15em}.contrast .violet-highlight{background:none;text-decoration:underline}
+.thought-person{width:clamp(6rem,17vw,11rem);flex:none}.thought-illustration .anxiety-bubble{font-weight:400;min-width:0}
+@media(max-width:34rem){.thought-illustration{flex-direction:column}}
+@media screen and (prefers-reduced-motion:no-preference){
+ #pensamientos:not([hidden]) .thought-person{animation:thought-sway 1.8s ease-in-out 2}
+}
+@keyframes thought-sway{0%,100%{transform:rotate(0)}35%{transform:translateY(-.25rem) rotate(-8deg)}70%{transform:translateY(-.12rem) rotate(6deg)}}
+.anxiety-layout{display:grid;grid-template-columns:minmax(7rem,11rem) fit-content(22rem);justify-content:center;gap:1rem;align-items:center}
+.anxiety-art{width:100%;max-width:11rem;justify-self:center}
+.anxiety-bubble{display:inline-block;transform:translateY(-.8rem);position:relative;margin:.25rem 0;padding:.7rem 1rem;border:1px solid var(--edge);border-radius:1rem;background:var(--paper);color:var(--accent);font-size:1.2rem;font-weight:700}
+.anxiety-bubble::before{content:"";position:absolute;top:45%;left:-.45rem;width:.75rem;height:.75rem;background:var(--paper);border-left:1px solid var(--edge);border-bottom:1px solid var(--edge);transform:rotate(45deg)}
+.signs-map{margin:1.5rem auto;max-width:58rem}
+.signs-center{position:relative;display:grid;place-items:center;width:1.65rem;aspect-ratio:1;border:2px solid var(--edge);border-radius:50%;background:var(--accent);margin:0 auto 1.5rem}
+.signs-center::after{content:"";position:absolute;top:100%;left:50%;height:1.5rem;border-left:2px solid var(--edge)}
+.anxiety-signs{position:relative;list-style:none;padding:0;margin:0;display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:.65rem}
+.anxiety-signs::before{content:"";position:absolute;top:0;left:12.5%;right:12.5%;border-top:2px solid var(--edge)}
+.anxiety-signs li{position:relative;display:grid;justify-items:center;align-content:start;gap:.45rem;padding:1.3rem .3rem .3rem;text-align:center;font-weight:700}
+.anxiety-signs li::before{content:"";position:absolute;top:0;left:50%;height:1rem;border-left:2px solid var(--edge)}
+.anxiety-signs svg{width:clamp(2.6rem,6vw,4rem);height:auto;color:var(--accent);transform-origin:center}
+body:not(.contrast) .anxiety-signs .signal-heart{color:#af2738;fill:#f28b93}
+
+@media(max-width:43rem){
+ .anxiety-signs{grid-template-columns:1fr;border-left:2px solid var(--edge);margin-left:1rem}
+ .anxiety-signs::before,.signs-center::after{display:none}
+ .signs-center{margin-left:0}
+ .anxiety-signs li{grid-template-columns:auto 1fr;justify-items:start;align-items:center;text-align:left;padding:.35rem 0 .35rem 1.25rem}
+ .anxiety-signs li::before{top:50%;left:0;height:0;width:.9rem;border:0;border-top:2px solid var(--edge)}
+}
+@media screen and (prefers-reduced-motion:no-preference){
+ #senales:not([hidden]) .anxiety-signs li{animation:signal-arrival .85s ease-out both;animation-delay:var(--delay)}
+ #senales:not([hidden]) .signal-heart{animation:signal-heartbeat 1.05s .9s 6}
+ #senales:not([hidden]) .signal-body{animation:signal-body-pulse 1.6s 2.4s 3}
+ #senales:not([hidden]) .signal-stomach{animation:signal-stomach-sway 1.15s 3.7s 3}
+}
+@keyframes signal-arrival{from{opacity:0;transform:translateY(-.65rem)}to{opacity:1;transform:none}}
+@keyframes signal-heartbeat{0%,48%,100%{transform:scale(1)}14%,33%{transform:scale(1.22)}}
+@keyframes signal-body-pulse{0%,100%{transform:scale(1)}50%{transform:scale(1.19)}}
+@keyframes signal-stomach-sway{0%,100%{transform:rotate(0)}35%{transform:rotate(-8deg)}70%{transform:rotate(7deg)}}
+@media(max-width:34rem){.anxiety-layout{grid-template-columns:1fr}.anxiety-art{max-width:7rem}.anxiety-bubble{justify-self:center}.anxiety-bubble::before{top:-.42rem;left:calc(50% - .35rem);transform:rotate(135deg)}}
+@media print{.anxiety-art{display:none}.anxiety-layout{display:block}}
+.stress-layout{display:grid;grid-template-columns:minmax(0,1fr) minmax(10rem,18rem);align-items:center;gap:1.2rem}
+.stress-art{width:100%;max-width:17rem;justify-self:center}
+.stress-hand{transform-origin:158px 112px}
+@media(max-width:40rem){.stress-layout{grid-template-columns:1fr}.stress-art{max-width:12rem}}
+@media print{.stress-art{display:none}.stress-layout{display:block}}
+@media screen and (prefers-reduced-motion:no-preference){
+ #estres:not([hidden]) .stress-hand{animation:stress-tick 5s ease-in-out both}
+}
+@keyframes stress-tick{from{transform:rotate(0)}to{transform:rotate(130deg)}}
+@media print{.paper-flight{display:none}}
+@media screen{
+ .stepper{position:relative;display:grid;grid-template-columns:1fr auto 1fr;gap:.4rem}.stepper #prev{justify-self:start}.stepper #next{justify-self:end}.stepper-center{display:grid;justify-items:center;gap:.15rem;text-align:center}.index-nav{display:grid;justify-items:center;z-index:3}
+ .index-menu{margin:0;padding:0;border:0}
+ .index-menu summary{display:grid;place-items:center;list-style:none;width:48px;height:48px;padding:0;border:1px solid var(--edge);border-radius:.75rem;background:var(--paper);color:var(--accent)}
+ .index-menu summary::-webkit-details-marker{display:none}
+ .index-menu summary:hover{background:var(--rose)}
+ .index-menu .steps{position:absolute;bottom:100%;left:50%;transform:translateX(-50%);width:min(29rem,100%);margin:0 0 .4rem;max-height:50vh;overflow:auto;padding:.75rem;background:var(--paper);border:1px solid var(--edge);border-radius:.75rem;box-shadow:0 .4rem 1rem #33243a22}
+}
+@media screen{
+ .sorting-bank{display:grid;gap:.55rem;margin:1rem 0}
+ .sorting-bank button{text-align:left;min-height:54px;touch-action:none;cursor:grab;user-select:none}
+ body:not(.contrast) .sorting-bank button:is(:hover,:focus-visible,[aria-pressed=true]){background:#fff7e2}
+ .sorting-bank button[aria-pressed=true]{outline:3px solid var(--accent);outline-offset:2px}
+ .sorting-bank button.dragging{position:relative;z-index:2;cursor:grabbing}
+ .sorting-target{min-height:9rem;border:2px dashed var(--bin-edge);border-bottom:8px solid var(--bin-edge);border-radius:1rem;background:var(--bin-bg);color:var(--bin-ink)}
+ .sorting-target:first-child{--bin-bg:#def4e9;--bin-edge:#4b816d;--bin-ink:#234e40}
+ .sorting-target:last-child{--bin-bg:#efe1f1;--bin-edge:#80577f;--bin-ink:#553151}
+ .contrast .sorting-target{--bin-bg:var(--paper);--bin-edge:var(--edge);--bin-ink:var(--ink)}
+ .sorting-target button{width:100%;min-height:52px;background:var(--paper);border-color:var(--bin-edge);font-family:"Segoe Print","Bradley Hand","Chalkboard SE",cursive;font-size:clamp(1.3rem,3vw,2rem);font-weight:700;line-height:1.25}
+ .sorting-target button:hover{background:var(--bin-bg)}
+ .sorting-target ul:empty::before{content:'Suelta aquí';display:block;text-align:center}
+ .sorting-target ul:empty{padding:0;list-style:none}
+ .sorting-feedback:not(:empty){padding:.75rem 1rem;border:1px solid var(--edge);border-radius:.7rem;background:var(--paper);font-weight:650}
+ .sorting-target ul{margin:.5rem 0;padding-left:1.25rem}
+}
+@media screen{
+ #bloqueos .thought-cards{display:grid;gap:1.3rem;margin-top:1.8rem}
+ #bloqueos .thought-cards details{margin:0}
+ .thought-cards details{padding:0;background:var(--paper)}
+ .comparison{align-items:stretch}
+ .comparison:has(details[open]) details:not([open]){align-self:start}
+ .thought-cards.comparison details{margin:0;background:#fff}
+ .thought-cards.comparison summary:hover{background:transparent}
+ .comparison details .thought-answer{background:transparent}
+ .contrast .thought-cards.comparison details{background:var(--paper)}
+ .thought-cards summary{display:grid;grid-template-columns:auto 1fr auto;align-items:center;gap:.7rem;padding:.85rem;list-style:none;font-size:clamp(1.05rem,2.3vw,1.35rem);line-height:1.35;min-height:64px}
+ .thought-cards summary::-webkit-details-marker{display:none}
+ .thought-cards summary:hover{background:var(--bg);border-radius:.7rem}
+ .thought-number,.thought-toggle{display:grid;place-items:center;width:2rem;height:2rem;border-radius:50%;background:var(--accent);color:var(--paper);font-size:.9rem}
+ .thought-toggle::before{content:'+'}
+ details[open] .thought-toggle::before{content:'−'}
+ .thought-answer{border-top:1px solid var(--edge);border-radius:0 0 .7rem .7rem;background:var(--bg);padding:.65rem 1rem .85rem;font-size:1.12rem}
+ .thought-answer p:first-child{color:var(--accent)}
+}
+@media print{.thought-number,.thought-toggle{display:none}}
+@media screen{
+ body:not(.contrast) .slide:nth-of-type(3n + 1){background:#fff}
+ body:not(.contrast) .slide:nth-of-type(3n + 2){background:#eaf7f0;--rose:#fff}
+ body:not(.contrast) .slide:nth-of-type(3n){background:#f4edf5;--rose:#e8d8ec}
+ body:not(.contrast) #exigencia{background:#fdfafc}
+ body:not(.contrast) #senales{background:#e7f6ee}
+ body:not(.contrast) #respirar{background:#f1e8f3}
+ body:not(.contrast) #pausa{background:#f6fcf8;--breath-fill:#ecddf1}
+ body:not(.contrast) #cierre{background:#63385e;color:#fff;--muted:#f2e5f0;--edge:#c8aec8;--accent:#fff;--rose:#744b70}
+ body:not(.contrast) #cierre .card{background:#744b70}
+}
+.access-bar{position:relative;display:flex;flex-wrap:wrap;align-items:center;gap:.35rem clamp(.35rem,2vw,1.4rem)}
+.access-bar .bar-action,.bar-menu summary{background:transparent;border:0;padding:.45rem .3rem;text-decoration:underline;text-underline-offset:.2em}
+.bar-menu{border:0;padding:0;margin:0}
+.access-menu{margin-left:auto}
+.bar-panel{position:absolute;z-index:5;top:100%;right:0;display:grid;gap:.7rem;padding:1rem;width:min(21rem,100%);border:1px solid var(--edge);border-radius:.75rem;background:var(--paper);box-shadow:0 .5rem 1.2rem #0003}
+.voice-panel{left:0;right:auto;width:min(36rem,100%);grid-template-columns:minmax(0,2fr) minmax(0,1fr)}
+.bar-panel label{display:grid;gap:.25rem}
+.bar-panel select{width:100%;min-width:0}
+.bar-panel output{font-weight:750}
+.farewell{text-align:center}
+.farewell .lead{margin-inline:auto}
+.farewell .pressure-question{color:var(--accent)}
+.resources-layout{display:grid;grid-template-columns:minmax(0,1fr) minmax(8rem,17rem);gap:1rem;align-items:center}
+.farewell-art{display:block;width:min(13rem,75%);height:auto;margin:.5rem auto .9rem}
+body:not(.contrast) .farewell-art{--step-mint:#d9efe5;--step-lilac:#efe1f0}
+@media screen and (prefers-reduced-motion:no-preference){
+ #despedida:not([hidden]) .farewell-art ellipse{transform-box:fill-box;transform-origin:center;animation:farewell-step .55s ease-out both}
+ #despedida:not([hidden]) .farewell-art ellipse:nth-child(1){animation-delay:.25s}
+ #despedida:not([hidden]) .farewell-art ellipse:nth-child(2){animation-delay:.95s}
+ #despedida:not([hidden]) .farewell-art ellipse:nth-child(3){animation-delay:1.65s}
+ #despedida:not([hidden]) .farewell-star{transform-box:fill-box;transform-origin:center;animation:farewell-glow 1.15s 2.35s ease-out both}
+}
+@keyframes farewell-step{from{transform:translateY(4px) scale(.85);opacity:0}to{transform:none;opacity:1}}
+@keyframes farewell-glow{0%{transform:scale(.7);opacity:0}55%{transform:scale(1.15);opacity:1}100%{transform:scale(1);opacity:1}}
+#resources-title{font-weight:400;letter-spacing:-.015em}
+body:not(.accessible-font) #resources-title{font-family:Georgia,serif}
+.resource-links{display:grid;gap:.6rem;margin:1.55rem 0 0;padding:0;list-style:none}
+.resource-links a{display:block;width:fit-content;min-height:44px;padding:.45rem .85rem;border:1px solid var(--edge);border-radius:.65rem;background:var(--paper);font-size:1.17rem;font-weight:650;text-underline-offset:.18em}
+body:not(.accessible-font) .resource-links a{font-family:"Trebuchet MS",sans-serif}
+.resource-links a:hover{background:var(--rose)}
+.agenda-art{width:100%;max-width:17rem;justify-self:center}
+body:not(.contrast) .agenda-art{--agenda-cover:#d7ede4;--agenda-pen:#dfc7e4}
+.agenda-heart{stroke-width:3}
+@media(max-width:38rem){.resources-layout{grid-template-columns:1fr}.agenda-art{max-width:12rem}}
+@media screen and (prefers-reduced-motion:no-preference){
+ #recursos:not([hidden]) .agenda-heart{stroke-dasharray:1;animation:agenda-ink 3.4s linear both}
+}
+@keyframes agenda-ink{from{stroke-dashoffset:1}to{stroke-dashoffset:0}}
+#recursos .muted{border-top:1px solid var(--edge);margin-top:2rem;padding-top:.65rem;font-size:.83rem;text-align:left}
+@media screen{body:not(.contrast) #despedida{background:#fffdf9}}
+body:not(.accessible-font) #cierre,body:not(.accessible-font) #cierre h2{font-family:"Avenir Next","Trebuchet MS",sans-serif}
+#cierre h2{font-weight:800;letter-spacing:-.025em}
+body.accessible-font,body.accessible-font h1,body.accessible-font h2,body.accessible-font .pressure-question,body.accessible-font .student-quote,body.accessible-font .perfection-prompt,body.accessible-font .perfection-example,body.accessible-font .perfection-intro .perfection-lead,body.accessible-font .pressure-value,body.accessible-font .sorting-target button{font-family:var(--selected-font),sans-serif}
+@media screen{
+ body.contrast{--bg:#fff;--paper:#fff;--ink:#000;--muted:#000;--rose:#fff;--edge:#000;--accent:#000}
+ body.contrast.light-on-dark{--bg:#000;--paper:#000;--ink:#fff;--muted:#fff;--rose:#000;--edge:#fff;--accent:#fff;color-scheme:dark}
+ .contrast .pressure-hot{--accent:var(--ink);--edge:var(--ink);--rose:var(--paper)}
+ .contrast .pressure-track input::-webkit-slider-runnable-track{background:var(--edge)}
+ .contrast .pressure-track input::-moz-range-track{background:var(--edge)}
+}
+@media print{
+ @page{size:A4;margin:14mm}
+ :root{font-size:11pt!important}body,body.contrast{--ink:#2c2030;--muted:#4e3b54;--rose:#e6f4ed;--paper:#fff;--edge:#817087;background:white;color:var(--ink)}header,nav,.stepper,.skip,.screen-only,button{display:none!important}.print-only{display:block}.shell{padding:0;max-width:none}.slide,.slide[hidden]{display:block!important;border:0;border-radius:0;padding:0;margin:0;break-after:page}.slide:last-of-type{break-after:auto}.card,aside,details{break-inside:avoid}h1,h2,h3,summary{break-after:avoid}h1,h2{font-size:27pt}p{orphans:2;widows:2}.lead,.prompt{font-size:12pt}.grid{grid-template-columns:1fr 1fr;gap:8pt;margin:8pt 0}aside,details,.card{padding:7pt 9pt}details::details-content{content-visibility:visible!important}details:not([open])>*{display:block}summary{min-height:0;padding:0} }
+</style>
+</head>
+<body>
+<a class="skip" href="#contenido">Ir a la actividad</a>
+<header><div class="shell">
+<div class="access-bar" role="group" aria-label="Lectura y accesibilidad">
+<button class="bar-action" id="listen"><span aria-hidden="true">▶</span> Escuchar</button>
+<button class="bar-action" id="stop" disabled><span aria-hidden="true">■</span> Detener</button>
+<details class="bar-menu">
+<summary>Elegir voz y velocidad</summary>
+<div class="bar-panel voice-panel">
+<label>Voz en español <select id="voice"><option value="">Predeterminada</option></select></label>
+<label>Velocidad <select id="rate"><option value=".8">Lenta</option><option selected value="1">Normal</option><option value="1.2">Rápida</option></select></label>
+</div>
+</details>
+<details class="bar-menu access-menu">
+<summary>Accesibilidad</summary>
+<div class="bar-panel">
+<div class="row"><button id="smaller" aria-label="Reducir tamaño de letra">A−</button><output id="size" aria-live="polite">100 %</output><button id="larger" aria-label="Aumentar tamaño de letra">A+</button></div>
+<label>Tipo de letra <select id="font"><option value="original">Original</option><option value="verdana">Verdana</option><option value="arial">Arial</option></select></label>
+<label>Contraste <select id="contrast"><option value="original">Presentación original</option><option value="light-on-dark">Blanco sobre negro</option><option value="dark-on-light">Negro sobre blanco</option></select></label>
+<button id="reset" class="primary">Presentación original</button>
+<button id="print">Imprimir / guardar PDF</button>
+</div>
+</details>
+</div>
+<p class="sr-only" id="audioStatus" role="status">La lectura explica la pantalla actual e incluye las respuestas abiertas.</p>
+</div></header>
+<main class="shell" id="contenido" tabindex="-1">
+
+
+<section class="slide cover" id="portada" aria-labelledby="cover-title">
+
+<h1 id="cover-title" tabindex="-1">PAUS<span class="cover-target">A<svg class="paper-flight" viewBox="0 0 220 145" aria-hidden="true" focusable="false">
+<defs>
+<path id="coverHeartRoute" d="M134 98C108 79 82 61 82 40c0-25 33-31 52-7 19-24 52-18 52 7 0 21-26 39-52 58C103 117 49 114 12 125"/>
+<mask id="coverHeartMask" maskUnits="userSpaceOnUse" x="0" y="0" width="220" height="145">
+<use id="coverHeartStill" href="#coverHeartRoute" fill="none" stroke="white" stroke-width="8"/>
+<path d="M134 98C108 79 82 61 82 40c0-25 33-31 52-7 19-24 52-18 52 7 0 21-26 39-52 58C103 117 49 114 12 125" pathLength="1" fill="none" stroke="white" stroke-width="8" stroke-dasharray="1" visibility="hidden">
+<set id="coverInkVisibility" attributeName="visibility" to="visible" begin="indefinite" dur="indefinite"/>
+<animate id="coverHeartInk" attributeName="stroke-dashoffset" from="1" to="0" begin="indefinite" dur="6s" fill="freeze"/>
+</path>
+</mask>
+</defs>
+<use class="trail" href="#coverHeartRoute" mask="url(#coverHeartMask)"/>
+<g>
+<animateMotion id="coverHeartFlight" begin="indefinite" dur="6s" fill="freeze" rotate="auto"><mpath href="#coverHeartRoute"/></animateMotion>
+<g class="plane" id="coverPlane" transform="translate(12 125) rotate(155)">
+<path fill="#d9f0e6" d="M0 0-45-14-34 0-45 16Z"/>
+<path fill="#fff" d="M0 0-34 0-39 10Z"/>
+</g>
+</g>
+</svg></span></h1>
+<h2>Cuando los exámenes pesan</h2>
+<p class="lead">Pon palabras a la presión de los exámenes y ensaya qué hacer cuando cuesta empezar, seguir o parar.</p>
+<footer class="slide-credit"><div class="pressure-question cover-signature">#orientadoracarmenmora</div></footer>
+</section>
+
+<section class="slide" id="presion" aria-labelledby="t1">
+<p class="kicker">PAUSA · 01 / 06</p>
+<h2 id="t1" tabindex="-1">¿Cómo te encuentras hoy?</h2>
+<p>Si piensas en tus exámenes, ¿cuánta presión sientes hoy, del 0 al 10?</p>
+<div id="pressureMeter" class="pressure-meter screen-only">
+<div class="pressure-readout" aria-hidden="true"><span class="pressure-value" id="pressureValue">5</span><span>de 10</span></div>
+<p id="pressureHint">Arrastra el círculo para explorar la escala.</p>
+<div class="pressure-track">
+<span class="pressure-end" aria-hidden="true">0</span>
+<input id="scale" type="range" min="0" max="10" step="1" value="5" aria-label="Termómetro de presión, de cero a diez" aria-describedby="pressureHint">
+<span class="pressure-end" aria-hidden="true">10<svg id="pressureFlame" class="pressure-flame" aria-hidden="true" viewBox="0 0 24 28" hidden><path d="M13 1c1 7-5 9-5 14-2-1-3-3-3-5-3 4-4 7-3 11a10 10 0 0 0 20-2c0-4-2-8-5-11 0 4-1 5-2 6 1-5 0-9-2-13Z"/></svg></span>
+</div>
+<div class="pressure-labels" aria-hidden="true"><span>Apenas hay presión</span><span>La presión ocupa casi todo</span></div>
+</div>
+<p class="print-only"><strong>Escala de presión</strong> · 0 — 1 — 2 — 3 — 4 — 5 — 6 — 7 — 8 — 9 — 10. Desde «apenas hay presión» hasta «ocupa casi todo».</p>
+<p id="pressurePause" class="pressure-question screen-only" hidden>Vamos a ver qué podemos hacer para bajar un poco esa presión.</p>
+</section>
+
+<section class="slide" id="estres" aria-labelledby="stress-title">
+<p class="kicker">PAUSA · 01 / 06 · Presión</p>
+<h2 id="stress-title" tabindex="-1">El estrés ante los exámenes</h2>
+<div class="stress-layout">
+<div>
+<p class="lead">Sentir <strong>estrés ante un examen es habitual</strong>. Es una respuesta del cuerpo y la mente a una exigencia.</p>
+<p class="lead">El estrés puede ayudarnos a <strong>ponernos en marcha</strong>. Pero cuando la presión se vuelve difícil de manejar, puede costarnos <strong>concentrarnos, empezar o seguir</strong>.</p>
+</div>
+<svg class="stress-art" viewBox="0 0 240 180" aria-hidden="true" focusable="false">
+ <circle cx="121" cy="88" r="76" fill="var(--rose)" stroke="var(--edge)"/>
+ <g stroke="var(--accent)" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+  <path fill="var(--paper)" d="M53 28h77l20 20v93H53z"/>
+  <path fill="none" d="M130 28v20h20M72 64h45M72 83h52M72 102h33M72 121h24"/>
+  <circle cx="158" cy="112" r="43" fill="var(--paper)"/>
+  <path fill="none" d="M158 78v5m0 58v5m-34-34h5m58 0h5M158 112l-12 8"/>
+  <path class="stress-hand" fill="none" d="M158 112V88"/>
+  <circle cx="158" cy="112" r="2" fill="var(--accent)"/>
+ </g>
+</svg>
+</div>
+<p class="pressure-question muted">Vamos a ver qué podemos decirnos cuando sentimos esa presión o ese estrés.</p>
+</section>
+
+<section class="slide" id="ansiedad" aria-labelledby="anxiety-title">
+<p class="kicker">PAUSA · 01 / 06 · Presión</p>
+<h2 id="anxiety-title" tabindex="-1">¿Por qué aparece la ansiedad antes de un examen?</h2>
+<p class="lead">Un examen nos puede importar mucho. Antes de hacerlo, hay cosas que no sabemos, como qué preguntas saldrán o cómo nos irá.</p>
+<p class="lead">En esa incertidumbre, la mente puede adelantarse con preguntas como estas, aunque el examen todavía no haya empezado:</p>
+<div class="anxiety-layout">
+<svg class="anxiety-art" viewBox="0 0 180 160" aria-hidden="true" focusable="false">
+<circle cx="80" cy="83" r="62" fill="var(--rose)" stroke="var(--edge)"/>
+<path d="M60 128v-18c-17-10-24-30-17-47 6-16 20-24 36-24 21 0 36 14 36 34l10 17h-12v13a9 9 0 0 1-9 9H92v16Z" fill="var(--paper)" stroke="var(--accent)" stroke-width="3" stroke-linejoin="round"/>
+<path d="M63 78c5-11 14-9 16-3 4-8 13-5 13 2 0 7-8 11-14 16-7-5-17-10-15-15Z" fill="none" stroke="var(--accent)" stroke-width="2"/>
+</svg>
+<p class="anxiety-bubble">¿Y si me quedo en blanco?<br>¿Y si suspendo?</p>
+</div>
+</section>
+
+<section class="slide" id="senales" aria-labelledby="signals-title">
+<p class="kicker">PAUSA · 01 / 06 · Presión</p>
+<h2 id="signals-title" tabindex="-1">¿Cómo se puede notar el estrés?</h2>
+<div class="signs-map">
+<div class="signs-center" aria-hidden="true"></div>
+<ul class="anxiety-signs">
+<li style="--delay:0.6s"><svg class="signal-heart" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 21S3 15.2 3 8.8C3 4.6 8 3 12 7c4-4 9-2.4 9 1.8C21 15.2 12 21 12 21Z"/></svg>Corazón más rápido</li>
+<li style="--delay:2.1s"><svg class="signal-body" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14 4a2 2 0 1 1-4 0 2 2 0 0 1 4 0ZM5 12l3-3h8l3 3m-9-1-1 5-2 5m7-10 1 5 2 5m-8-5h6M3 5l2 2m16-2-2 2"/></svg>Tensión en el cuerpo</li>
+<li style="--delay:3.6s"><svg class="signal-stomach" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M10 2v5c0 2 1 3 3 3 1 0 2-3 4-3 3 0 4 3 3 6-1 3-4 4-7 4H8a2 2 0 0 0 0 4h6m-6-2h6a1 1 0 0 1 0 2m-1-19v4m-3 7c1 1 3 1 4 0"/></svg>Nudo en el estómago</li>
+<li style="--delay:5.1s"><svg class="" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 5a3 3 0 0 0-5-1 3 3 0 0 0-3 4 4 4 0 0 0 0 7 3 3 0 0 0 3 4 3 3 0 0 0 5 0 3 3 0 0 0 5 0 3 3 0 0 0 3-4 4 4 0 0 0 0-7 3 3 0 0 0-3-4 3 3 0 0 0-5 1Zm0 0v14M7 8c2 0 3 1 3 3m-5 4c2-2 4-1 5 1m7-8c-2 0-3 1-3 3m5 4c-2-2-4-1-5 1"/></svg>Dificultad para concentrarse o recordar</li>
+</ul>
+</div>
+<p class="prompt"><strong>Lo que sientes en ese momento no predice cómo te irá.</strong></p>
+</section>
+
+<section class="slide" id="pensamientos" aria-labelledby="t2">
+<p class="kicker">PAUSA · 02 / 06</p>
+<h2 id="t2" tabindex="-1">Pensamientos ocultos</h2>
+<p class="lead">Ya hemos visto cómo se puede notar la presión en el cuerpo. Ahora vamos a fijarnos en <strong>lo que nos decimos cuando sentimos esa presión</strong>.</p>
+<div class="thought-illustration">
+<svg class="thought-person" viewBox="0 0 180 160" aria-hidden="true" focusable="false">
+<circle cx="90" cy="80" r="70" fill="var(--rose)" stroke="var(--edge)"/>
+<g stroke="var(--accent)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+<path d="M52 68c0-26 14-42 38-42s38 16 38 42v36c0 14 4 24 9 30-15 5-29 1-47-5-18 6-32 10-47 5 5-6 9-16 9-30Z" fill="var(--accent)"/>
+<path d="M58 138c3-14 12-22 25-25v-12h14v12c13 3 22 11 25 25" fill="var(--rose)"/>
+<path d="M62 68c0-19 11-33 28-33s28 14 28 33v12c0 17-13 29-28 29S62 97 62 80Z" fill="var(--paper)"/>
+<path d="M55 75c1-24 11-45 35-45 22 0 31 17 33 35-13-2-23-9-29-20-9 12-23 20-39 23Z" fill="var(--accent)"/>
+<path d="M70 73q5-3 10-1m20 0q5-2 10 1M90 79l-2 8h4m-9 8q7 4 14 0" fill="none" stroke-width="1.6"/>
+<g fill="var(--accent)" stroke="none"><circle cx="76" cy="79" r="2.5"/><circle cx="104" cy="79" r="2.5"/></g>
+</g>
+</svg>
+<p class="pressure-question anxiety-bubble">«No me va a dar tiempo a estudiarlo todo».</p>
+</div>
+<p class="lead thought-caption">Esa frase puede venirte a la cabeza nada más abrir los apuntes, incluso antes de ponerte a estudiar.</p>
+</section>
+
+<section class="slide" id="automaticos" aria-labelledby="automatic-title">
+<p class="kicker">PAUSA · 02 / 06 · Pensamientos ocultos</p>
+<div class="automatic-heading">
+<h2 id="automatic-title" tabindex="-1">Son pensamientos automáticos</h2>
+<svg viewBox="0 0 160 118" aria-hidden="true" focusable="false">
+<g transform="translate(30 100)">
+<path id="thoughtHeartPath" class="thought-trail" d="M48-27C33-39 13-52 13-69c0-20 25-24 35-7 10-17 35-13 35 7 0 17-20 30-35 42C33-15 18-7 0 0"/>
+<g>
+<animateMotion id="thoughtHeartFlight" begin="indefinite" dur="5s" fill="freeze" rotate="auto">
+<mpath href="#thoughtHeartPath"/>
+</animateMotion>
+<g id="thoughtHeartPlane" transform="rotate(156)" stroke="var(--accent)" stroke-width="1.6" stroke-linejoin="round">
+<g transform="scale(1.22)">
+<path d="M-16-9 16 0-16 10-8 1Z" fill="var(--thought-plane-fill,var(--rose))"/>
+<path d="M-8 1 16 0-10 5-14 8Z" fill="var(--thought-plane-fold,var(--paper))"/>
+</g>
+</g>
+</g>
+</g>
+</svg>
+</div>
+<p class="lead">Son ideas, imágenes o predicciones que surgen sin que las elijamos.</p>
+<p class="lead">A veces se sienten <strong class="violet-highlight">intrusivos</strong> porque aparecen sin aviso y vuelven aunque estemos intentando concentrarnos en otra cosa.</p>
+<div class="card tint lead"><p><strong>¿Por qué se hacen tan presentes?</strong> Cuando algo nos importa y todavía no sabemos cómo saldrá, es fácil prestar más atención a lo que podría ir mal. Si ya sentimos presión, esas ideas pueden repetirse y sonar muy convincentes.</p></div>
+<p class="prompt">Que una predicción nos parezca real no significa que vaya a ocurrir. Podemos darnos cuenta de que ha aparecido ese pensamiento y volver a lo que estábamos haciendo o ponernos con otra cosa, aunque el pensamiento siga ahí.</p>
+</section>
+
+<section class="slide" id="tarjetas" aria-labelledby="tarjetas-title">
+<p class="kicker">PAUSA · 02 / 06 · Pensamientos ocultos</p>
+<h2 id="tarjetas-title" tabindex="-1">Tres pensamientos antes de un examen</h2>
+<div class="thought-cards">
+<details>
+<summary><span class="thought-number" aria-hidden="true">01</span><span class="thought-quote">«No me va a dar tiempo a estudiarlo todo»</span><span class="thought-toggle" aria-hidden="true"></span></summary>
+<div class="thought-answer">
+<p><strong>¿Qué sabemos?</strong> Tengo varios exámenes programados para la semana que viene.</p>
+<p><strong>¿Qué estamos dando por hecho?</strong> Que, como tengo varios exámenes, no me va a dar tiempo a prepararlos y voy a suspender o a sacar una mala nota.</p>
+<p><strong>¿Qué podemos hacer?</strong></p>
+<p><strong>En primer lugar, reconozco el pensamiento.</strong> «Con tantos exámenes, me ha venido la idea de que voy a suspender o a sacar una mala nota». <strong>Es un pensamiento.</strong> Todavía no sé cómo me irá. Lo que tengo que hacer es <strong>planificar</strong>.</p>
+<p>Tengo que poner las fechas de los exámenes en un calendario, dedicar más tiempo al examen que tengo antes y dejar también tiempo para preparar el que más me cueste.</p>
+</div>
+</details>
+<details>
+<summary><span class="thought-number" aria-hidden="true">02</span><span class="thought-quote">«Todo el mundo va mejor que yo»</span><span class="thought-toggle" aria-hidden="true"></span></summary>
+<div class="thought-answer">
+<p><strong>¿Qué sabemos?</strong> Dos compañeras han dicho que ya han empezado a estudiar el tema y que no les parece difícil.</p>
+<p><strong>¿Qué estamos dando por hecho?</strong> Que, como ellas ya han empezado a estudiar y el tema no les parece difícil, el examen les va a salir mucho mejor que a mí.</p>
+<p><strong>¿Qué podemos hacer?</strong></p>
+<p>Al oírlas, me he comparado con ellas y he pensado que el examen les saldrá mejor que a mí. <strong>Es un pensamiento.</strong> Todavía no sé cómo nos irá. Puedo volver a lo que necesito preparar.</p>
+</div>
+</details>
+<details>
+<summary><span class="thought-number" aria-hidden="true">03</span><span class="thought-quote">«Si no entiendo este tema de Química, es que se me da mal la asignatura»</span><span class="thought-toggle" aria-hidden="true"></span></summary>
+<div class="thought-answer">
+<p><strong>¿Qué sabemos?</strong> Hay un tema de Química que todavía no entiendo bien.</p>
+<p><strong>¿Qué estamos dando por hecho?</strong> Que la dificultad que tengo con este tema ya me dice cómo se me va a dar toda la asignatura.</p>
+<p><strong>¿Qué podemos hacer?</strong></p>
+<p><strong>Reconozco el pensamiento.</strong> «Al atascarme con este tema, me ha venido la idea de que se me da mal la Química». <strong>Es solo un pensamiento.</strong> Puedo preguntarme qué está influyendo.</p>
+<p>Quizá he tenido poco tiempo para estudiar, este tema es más complejo o necesito organizar mejor el repaso. Según lo que vea, puedo repartir el tema en partes, dedicar más tiempo a la que me cuesta o pedir que me lo expliquen.</p>
+</div>
+</details>
+</div>
+</section>
+
+<section class="slide" id="exigencia" aria-labelledby="t3">
+<p class="kicker">PAUSA · 03 / 06</p>
+<div class="perfection-intro">
+<div>
+<h2 id="t3" tabindex="-1">Exigencia y perfeccionismo</h2>
+<p class="lead perfection-lead">Querer hacerlo bien puede orientar el esfuerzo.</p>
+<p class="lead perfection-lead">Pero una regla rígida puede hacer que cueste empezar, avanzar o dar algo por terminado.</p>
+</div>
+<figure class="perfection-target">
+<svg viewBox="0 0 230 150" aria-hidden="true" focusable="false">
+<g stroke="var(--accent)" stroke-width="2">
+<circle cx="91" cy="75" r="65" fill="var(--target-mint,var(--paper))"/>
+<circle cx="91" cy="75" r="48" fill="var(--target-white,var(--rose))"/>
+<circle cx="91" cy="75" r="31" fill="var(--target-mint,var(--paper))"/>
+<circle cx="91" cy="75" r="13" fill="var(--target-white,var(--paper))"/>
+</g>
+<g class="target-arrows" fill="none" stroke="var(--target-arrow,var(--accent))" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round">
+<path d="m201 18-94 38m4-8-4 8 9 2m73-36 7-8m-7 8 11 2"/>
+<path d="m218 68-109 8m7-6-7 6 8 5m87-12 9-6m-9 6 10 5"/>
+<path d="m198 127-92-34m9-2-9 2 5 8m75 22 10-2m-10 2 6 8"/>
+</g>
+</svg>
+<figcaption class="pressure-question">«Si no doy justo en el centro,<br>no cuenta».</figcaption>
+</figure>
+</div>
+<p class="prompt"><span class="perfection-prompt">Imagínate lo siguiente:</span> <span class="perfection-example">Tienes dos apartados de Historia para estudiar. En el primero hay muchas fechas, nombres y ciudades, y no se te quedan. Tocad las tarjetas para ver qué pasa en cada caso.</span></p>
+<div class="grid thought-cards comparison">
+<details>
+<summary><span class="thought-number" aria-hidden="true">01</span><span class="thought-quote">Exigencia flexible</span><span class="thought-toggle" aria-hidden="true"></span></summary>
+<div class="thought-answer"><p class="label">Lo que me digo</p><p>«Anoto las fechas, los nombres y las ciudades que confundo, estudio el segundo apartado y después vuelvo a repasarlos».</p><p><strong>Qué pasa.</strong> Avanzo con los dos apartados y sé qué datos tengo que volver a repasar.</p></div>
+</details>
+<details>
+<summary><span class="thought-number" aria-hidden="true">02</span><span class="thought-quote">Regla perfeccionista</span><span class="thought-toggle" aria-hidden="true"></span></summary>
+<div class="thought-answer"><p class="label">Lo que me digo</p><p>«Hasta que no me sepa todas las fechas, los nombres y las ciudades del primero, no puedo pasar al segundo».</p><p><strong>Qué pasa.</strong> Puedo dedicar todo el tiempo al primer apartado y quedarme sin estudiar el segundo.</p></div>
+</details>
+</div>
+</section>
+
+<section class="slide" id="clasificar" aria-labelledby="sort-title">
+<p class="kicker">PAUSA · 03 / 06 · Exigencia y perfeccionismo</p>
+<h2 id="sort-title" tabindex="-1">¿Exigencia flexible o regla perfeccionista?</h2>
+<p class="lead screen-only" id="sortingHint">Arrastrad cada frase a su sitio.</p>
+<div class="screen-only">
+<div id="sortingBank" class="sorting-bank">
+<button type="button" aria-pressed="false" data-answer="flexible" data-reason="Acota la dificultad y permite seguir practicando.">«Si me atasco en un problema de Física, marco el paso que no entiendo y pruebo el siguiente.»</button>
+<button type="button" aria-pressed="false" data-answer="rigida" data-reason="Un tropiezo puntual se convierte en una obligación de volver a empezar.">«Si me trabo una vez al ensayar la exposición, tengo que repetirla entera desde el principio.»</button>
+<button type="button" aria-pressed="false" data-answer="rigida" data-reason="Exigir que la primera parte quede perfecta impide avanzar con el borrador.">«Hasta que la introducción de la redacción quede perfecta, no puedo escribir el resto.»</button>
+<button type="button" aria-pressed="false" data-answer="flexible" data-reason="Usa un criterio concreto para revisar y saber cuándo terminar.">«Antes de entregar el trabajo, compruebo que he respondido a lo que se pedía y corrijo lo importante.»</button>
+<button type="button" aria-pressed="false" data-answer="flexible" data-reason="Pedir una aclaración permite resolver una duda concreta y continuar.">«Si no entiendo qué tengo que hacer en una tarea de laboratorio, pregunto antes de seguir.»</button>
+<button type="button" aria-pressed="false" data-answer="rigida" data-reason="Exigir hablar sin errores impide practicar algo que todavía se está aprendiendo.">«Si en Inglés cometo algún error al hablar, mejor no participo.»</button>
+</div>
+<div class="grid">
+<div class="card sorting-target" data-category="flexible"><button type="button">Exigencia flexible</button><ul></ul></div>
+<div class="card sorting-target" data-category="rigida"><button type="button">Regla perfeccionista</button><ul></ul></div>
+</div>
+<p id="sortingStatus" class="sorting-feedback" role="status"></p>
+</div>
+<div class="print-only">
+<p>«Si me atasco en un problema de Física, marco el paso que no entiendo y pruebo el siguiente.» <strong>Exigencia flexible</strong></p>
+<p>«Si me trabo una vez al ensayar la exposición, tengo que repetirla entera desde el principio.» <strong>Regla perfeccionista</strong></p>
+<p>«Hasta que la introducción de la redacción quede perfecta, no puedo escribir el resto.» <strong>Regla perfeccionista</strong></p>
+<p>«Antes de entregar el trabajo, compruebo que he respondido a lo que se pedía y corrijo lo importante.» <strong>Exigencia flexible</strong></p>
+<p>«Si no entiendo qué tengo que hacer en una tarea de laboratorio, pregunto antes de seguir.» <strong>Exigencia flexible</strong></p>
+<p>«Si en Inglés cometo algún error al hablar, mejor no participo.» <strong>Regla perfeccionista</strong></p>
+</div>
+</section>
+
+<section class="slide" id="bloqueos" aria-labelledby="t5">
+<p class="kicker">PAUSA · 04 / 06</p>
+<h2 id="t5" tabindex="-1">Cuando tengo exámenes y me bloqueo, ¿qué puedo probar?</h2>
+<div class="thought-cards">
+<details>
+<summary><span class="thought-number" aria-hidden="true">01</span><span class="thought-quote">Antes del examen · <span class="student-quote">«No sé por dónde empezar»</span></span><span class="thought-toggle" aria-hidden="true"></span></summary>
+<div class="thought-answer"><p><strong>Concreto qué voy a estudiar y cuánto tiempo voy a dedicarle.</strong> Cambio «estudiar Química» por una tarea con hora de inicio y de cierre: «De 17:00 a 17:20, repasar cómo se ajusta una reacción». Divido el repaso en partes manejables y decido cuándo revisar cada una.</p></div>
+</details>
+<details>
+<summary><span class="thought-number" aria-hidden="true">02</span><span class="thought-quote">Durante el examen · <span class="student-quote">«Me he quedado en blanco»</span></span><span class="thought-toggle" aria-hidden="true"></span></summary>
+<div class="thought-answer"><p><strong>Hago una pausa breve y elijo por dónde seguir.</strong> Vuelvo a leer qué me pide el enunciado. Si sigo sin saber cómo empezar, paso a una pregunta que sí sé cómo responder.</p></div>
+</details>
+<details>
+<summary><span class="thought-number" aria-hidden="true">03</span><span class="thought-quote">Después del examen · <span class="student-quote">«Salgo del examen y sigo repasando mis respuestas en la cabeza»</span></span><span class="thought-toggle" aria-hidden="true"></span></summary>
+<div class="thought-answer"><p><strong>El examen ya está hecho.</strong> Cuando me lo devuelvan, podré ver qué tal me ha ido. Ahora puedo pasar a lo siguiente.</p></div>
+</details>
+</div>
+
+</section>
+
+<section class="slide" id="respirar" aria-labelledby="breathing-intro-title">
+<p class="kicker">PAUSA · 05 / 06 · Respiración</p>
+<h2 id="breathing-intro-title" tabindex="-1">Un momento para respirar</h2>
+<p class="lead">Vamos a probar una técnica de respiración suave para hacer una <strong>pausa</strong> y ver si nos ayuda a relajarnos.</p>
+<svg class="lungs-art" viewBox="0 0 200 150" aria-hidden="true" focusable="false">
+<g class="lungs-pair" fill="var(--lung-fill,var(--rose))" stroke="var(--accent)" stroke-width="2.5" stroke-linejoin="round">
+<path d="M90 48c-7-13-17-18-29-11-16 9-32 30-42 53-6 14-5 30 5 36 13 8 43-3 59-15 7-5 9-10 9-22Z"/>
+<path d="M110 48c7-13 17-18 29-11 16 9 32 30 42 53 6 14 5 30-5 36-13 8-43-3-59-15-7-5-9-10-9-22Z"/>
+</g>
+<path d="M100 15v39m0 0L72 80m28-26 28 26M76 76l-15 2m16-3-1 15m48-14 15 2m-16-3 1 15" fill="none" stroke="var(--accent)" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+</svg>
+</section>
+
+<section class="slide" id="pausa" aria-labelledby="t6">
+<p class="kicker">PAUSA · 05 / 06</p>
+<h2 id="t6" tabindex="-1">Círculo de respiración</h2>
+<p class="lead">Puedes seguir la propuesta o mirar un punto fijo.</p>
+<p>Si lo prefieres, nota el contacto de los pies con el suelo o del cuerpo con la silla. Deja que la respiración siga su ritmo. Puedes mantener los ojos abiertos.</p>
+<div class="screen-only">
+<p>Deja entrar el aire mientras el círculo crece y suéltalo mientras se recoge. Respira a tu ritmo, sin forzar ni retener el aire.</p>
+<div class="tools breath-controls"><button class="primary" id="startTimer">Iniciar respiración</button><label>Duración <select id="duration"><option value="60">1 min · clase</option><option value="300">5 min · en casa</option></select></label><button id="resetTimer">Reiniciar</button></div>
+<div id="breathGuide" class="breath-guide">
+<div class="breath-ring"><div class="breath-disc" id="breathDisc" aria-hidden="true"></div><p class="breath-phase" id="breathPhase">Cuando quieras</p></div>
+</div><p class="timer breath-clock" id="clock" role="timer" aria-label="Tiempo restante">1:00</p>
+<p id="timerStatus" role="status"></p></div>
+<details>
+<summary>Cómo practicar la respiración</summary>
+<ol>
+<li>Siéntate y nota el contacto de los pies con el suelo o del cuerpo con la silla. Deja entrar el aire suavemente por la nariz y suéltalo despacio por la boca. Respira sin forzar ni retener el aire. Si te ayuda, puedes contar al inspirar y al soltar el aire.</li>
+<li>Empieza con un minuto. Otro día, puedes probar la opción de cinco minutos si la práctica te resulta cómoda. Si te mareas o notas incomodidad, para y vuelve a respirar como de costumbre.</li>
+</ol>
+</details>
+</section>
+
+<section class="slide" id="cierre" aria-labelledby="t7">
+<p class="kicker">PAUSA · 06 / 06</p>
+<h2 id="t7" tabindex="-1">No eres una nota.</h2>
+<p class="lead">Una nota recoge el resultado de una tarea en unas condiciones muy concretas. Tu valor no depende de ese resultado.</p>
+<div class="grid">
+<div class="card tint"><h3>Un paso</h3><p>«Si me atasco, voy a probar…»</p></div>
+<div class="card"><h3>Un apoyo</h3><p>«Si necesito ayuda, puedo hablar con…»</p></div>
+<div class="card"><h3>Empieza con un plan que puedas realizar</h3><p>Elige dos tareas concretas y decide a qué hora harás cada una. Si te queda alguna duda, déjala escrita para que puedas retomarla o pedir ayuda.</p></div>
+<div class="card tint"><h3>Descansa y duerme</h3><p>Duerme de ocho a diez horas. Dormir bien ayuda a la atención y a la memoria.</p></div>
+</div>
+</section>
+
+<section class="slide" id="recursos" aria-labelledby="resources-title">
+<div class="resources-layout">
+<div>
+<h2 id="resources-title" tabindex="-1">Organiza tu estudio</h2>
+<ul class="resource-links">
+<li><a href="https://orientadoracarmenmora-max.github.io/estudia_con_metodo/" target="_blank" rel="noopener">Técnicas de estudio</a></li>
+<li><a href="https://orientadoracarmenmora-max.github.io/organizate/" target="_blank" rel="noopener">Organizador y planificador</a></li>
+</ul>
+</div>
+<svg class="agenda-art" viewBox="0 0 240 175" aria-hidden="true" focusable="false">
+<g stroke="var(--accent)" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+<rect x="34" y="24" width="145" height="130" rx="11" fill="var(--agenda-cover,var(--rose))"/>
+<rect x="46" y="27" width="123" height="119" rx="6" fill="var(--paper)"/>
+<path d="M37 46h19m-19 24h19m-19 24h19m-19 24h19M73 50h61M73 65h35M73 121h55M73 133h40" fill="none"/>
+<path id="agendaHeartPath" class="agenda-heart" pathLength="1" d="M111 112C96 102 86 94 87 85c1-12 16-14 24-3 8-11 23-9 24 3 1 9-9 17-24 27Z" fill="none"/>
+<g>
+<animateMotion id="agendaPenFlight" begin="indefinite" dur="3.4s" fill="freeze"><mpath href="#agendaHeartPath"/></animateMotion>
+<g id="agendaPen" transform="translate(111 112)">
+<path d="M0 0 4-14 47-64q4-5 9-1l3 2q4 4 0 9L15-5Z" fill="var(--agenda-pen,var(--paper))"/>
+<path d="m4-14 11 9M43-59l12 10M0 0l6-2-4-4Z" fill="none"/>
+</g>
+</g>
+</g>
+</svg>
+</div>
+<div class="muted">
+<h3>Fuentes consultadas</h3>
+<p><a href="https://www.who.int/en/news-room/questions-and-answers/item/stress">Estrés (OMS)</a> · <a href="https://www.nimh.nih.gov/health/publications/so-stressed-out-fact-sheet">Estrés y ansiedad (NIMH)</a> · <a href="https://www.gov.uk/government/publications/coping-with-exam-pressure-a-guide-for-students/coping-with-exam-pressure-a-guide-for-students">Presión ante los exámenes (Ofqual)</a> · <a href="https://oxfordhealth.nhs.uk/wp-content/uploads/sites/44/2024/05/OH-027.24-Cognitive-Behavioural-Therapy-CBT-Oxfordshire-Psychological-Therapies.pdf">Pensamientos y emociones (Oxford Health NHS)</a> · <a href="https://www.nhs.uk/mental-health/self-help/guides-tools-and-activities/breathing-exercises-for-stress/">Respiración suave (NHS)</a> · <a href="https://ies.ed.gov/ncee/wwc/Docs/PracticeGuide/20072004.pdf">Técnicas de repaso (IES)</a> · <a href="https://www.cdc.gov/sleep/about/index.html">Sueño, atención y memoria (CDC)</a></p>
+</div>
+</section>
+
+<section class="slide farewell" id="despedida" aria-labelledby="farewell-title">
+<svg class="farewell-art" viewBox="0 0 230 105" aria-hidden="true" focusable="false">
+<path d="M20 87c39 9 66-7 96-28 28-20 56-27 88-24" fill="none" stroke="var(--edge)" stroke-width="2" stroke-linecap="round" stroke-dasharray="2 7"/>
+<g stroke="var(--accent)" stroke-width="1.8">
+<ellipse cx="45" cy="84" rx="23" ry="10" fill="var(--step-mint,var(--paper))"/>
+<ellipse cx="102" cy="66" rx="22" ry="10" fill="var(--step-lilac,var(--paper))"/>
+<ellipse cx="157" cy="43" rx="21" ry="9" fill="var(--step-mint,var(--paper))"/>
+<path class="farewell-star" d="M200 9c0 12 4 16 15 17-11 1-15 5-15 17-1-12-5-16-16-17 11-1 15-5 16-17Z" fill="var(--step-lilac,var(--paper))" stroke-linejoin="round"/>
+</g>
+</svg>
+<h2 id="farewell-title" tabindex="-1">No tienes que resolverlo todo hoy.</h2>
+<p class="lead">Elige un paso que puedas dar.</p>
+<p>Recuerda que, si necesitas apoyo, puedes acudir al departamento de orientación.</p>
+<p class="pressure-question" id="farewell-signature">#orientadoracarmenmora</p>
+</section>
+
+<footer id="presentationCredit" class="presentation-credit muted screen-only" hidden>© 2026 Carmen Martínez Mora. Todos los derechos reservados.</footer>
+<div class="row stepper" aria-label="Navegación entre actividades">
+<button id="prev">Anterior</button><div class="stepper-center"><nav class="index-nav" aria-label="Índice de la tutoría">
+<details class="index-menu" id="indexMenu">
+<summary aria-label="Índice" title="Índice"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 11 12 3l9 8M5 10v10h5v-6h4v6h5V10"/></svg></summary>
+<div class="steps">
+<a class="jump" href="#portada">Portada</a><a class="jump" href="#presion">1 · Presión</a><a class="jump" href="#estres">1 · Estrés</a><a class="jump" href="#ansiedad">1 · Ansiedad</a><a class="jump" href="#senales">1 · Señales</a><a class="jump" href="#pensamientos">2 · Pensamientos</a><a class="jump" href="#automaticos">2 · Automáticos</a><a class="jump" href="#tarjetas">2 · Tres pensamientos</a><a class="jump" href="#exigencia">3 · Exigencia</a><a class="jump" href="#clasificar">3 · ¿Cuál es cuál?</a><a class="jump" href="#bloqueos">4 · Bloqueos</a><a class="jump" href="#respirar">5 · Un momento para respirar</a><a class="jump" href="#pausa">5 · Respiración</a><a class="jump" href="#cierre">6 · No eres una nota</a><a class="jump" href="#recursos">6 · Recursos</a><a class="jump" href="#despedida">6 · Despedida</a>
+</div>
+</details>
+</nav>
+<span id="progress" class="sr-only" aria-live="polite"></span></div><button id="next" class="primary">Siguiente</button>
+</div>
+<noscript><style>.tools,.stepper,#print,.screen-only{display:none!important}.print-only{display:block}</style><p>Las actividades se muestran seguidas. Puedes abrir las respuestas y usar la función de impresión del navegador.</p></noscript>
+</main>
+<script>
+'use strict';
+const $ = id => document.getElementById(id);
+const slides = Array.from(document.querySelectorAll('.slide'));
+const links = Array.from(document.querySelectorAll('nav .jump'));
+const audio = window.speechSynthesis;
+const defaultAudio = $('audioStatus').textContent;
+const defaults = {font:'original',size:100,rate:'1',voice:'',contrast:'original'};
+let prefs = {...defaults};
+try { prefs = {...prefs,...JSON.parse(localStorage.getItem('pausa-ajustes'))}; } catch {}
+let index = 0;
+let voices = [];
+let preferredVoice;
+let speechRun = 0;
+let utterance;
+function stopSpeech(message = defaultAudio) {
+  speechRun++;
+  if (audio) audio.cancel();
+  utterance = null;
+  $('stop').disabled = true;
+  $('audioStatus').textContent = audio ? message : 'Este navegador no ofrece lectura en voz alta.';
+}
+function sectionNumber() {
+  const cardsIndex = slides.indexOf($('tarjetas'));
+  return index - Number(index >= slides.indexOf($('recursos'))) - Number(index >= slides.indexOf($('despedida'))) - Number(index >= slides.indexOf($('pausa'))) - Number(index >= slides.indexOf($('automaticos'))) - Number(index >= slides.indexOf($('estres'))) - Number(index >= slides.indexOf($('ansiedad'))) - Number(index >= slides.indexOf($('senales'))) - Number(index >= cardsIndex) - Number(index >= slides.indexOf($('clasificar')));
+}
+function show(focus) {
+  const requested = slides.findIndex(slide => '#' + slide.id === location.hash);
+  index = Math.max(0, requested);
+  $('presentationCredit').hidden = index === 0;
+  slides.forEach((slide, i) => { slide.hidden = i !== index; });
+  if (slides[index].id === 'portada' && !window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+    const flight = $('coverHeartFlight');
+    if (typeof flight.beginElement === 'function') {
+      $('coverHeartStill').setAttribute('visibility', 'hidden');
+      $('coverPlane').removeAttribute('transform');
+      $('coverHeartInk').beginElement();
+      $('coverInkVisibility').beginElement();
+      flight.beginElement();
+    }
+  }
+  if (slides[index].id === 'automaticos' && !window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+    const flight = $('thoughtHeartFlight');
+    if (typeof flight.beginElement === 'function') {
+      $('thoughtHeartPlane').removeAttribute('transform');
+      flight.beginElement();
+    }
+  }
+  if (slides[index].id === 'recursos' && !window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+    const penFlight = $('agendaPenFlight');
+    if (typeof penFlight.beginElement === 'function') {
+      $('agendaPen').removeAttribute('transform');
+      penFlight.beginElement();
+    }
+  }
+  links.forEach((link, i) => {
+    if (i === index) link.setAttribute('aria-current', 'step');
+    else link.removeAttribute('aria-current');
+  });
+  $('progress').textContent = index === 0 ? 'Portada' : 'Sección ' + sectionNumber() + ' de ' + (slides.length - 10);
+  $('prev').disabled = index === 0;
+  $('next').disabled = index === slides.length - 1;
+  $('next').textContent = index === 0 ? 'Empezar la tutoría' : slides[index].id === 'automaticos' ? 'Ver las tarjetas' : slides[index].id === 'exigencia' ? '¿Cuál es cuál?' : slides[index].id === 'respirar' ? 'Ver el círculo' : 'Siguiente';
+  if (focus) {
+    stopSpeech();
+    if (slides[index].id !== 'pausa') pauseTimer();
+    slides[index].querySelector('h1,h2').focus();
+  }
+}
+const indexMenu = $('indexMenu');
+links.forEach(link => link.addEventListener('click', () => {
+  indexMenu.open = false;
+  if (link.hash === location.hash) slides[index].querySelector('h1,h2').focus();
+}));
+indexMenu.addEventListener('keydown', event => {
+  if (event.key === 'Escape' && indexMenu.open) {
+    indexMenu.open = false;
+    indexMenu.querySelector('summary').focus();
+  }
+});
+document.querySelector('.skip').onclick = event => {
+  event.preventDefault();
+  slides[index].querySelector('h1,h2').focus();
+};
+function go(offset) { location.hash = slides[index + offset].id; }
+$('prev').onclick = () => go(-1);
+$('next').onclick = () => go(1);
+window.addEventListener('hashchange', () => {
+  if (location.hash !== '#contenido') show(true);
+});
+
+function applyPrefs() {
+  for (const key of ['font','rate','voice','contrast']) {
+    $(key).value = prefs[key];
+    if ($(key).selectedIndex < 0) $(key).value = defaults[key];
+  }
+  const savedSize = Number(prefs.size);
+  const size = savedSize >= 80 && savedSize <= 150 ? savedSize : 100;
+  const font = $('font').value;
+  document.body.classList.toggle('accessible-font', font !== 'original');
+  document.body.style.setProperty('--selected-font', font === 'arial' ? 'Arial' : 'Verdana');
+  document.body.classList.toggle('contrast', $('contrast').value !== 'original');
+  document.body.classList.toggle('light-on-dark', $('contrast').value === 'light-on-dark');
+  document.documentElement.style.setProperty('--scale', size / 100);
+  $('size').textContent = size + ' %';
+  $('smaller').disabled = size <= 80;
+  $('larger').disabled = size >= 150;
+  try { localStorage.setItem('pausa-ajustes', JSON.stringify(prefs)); } catch {}
+}
+for (const key of ['font','rate','voice','contrast']) $(key).onchange = () => {
+  prefs[key] = $(key).value;
+  if (key === 'voice' || key === 'rate') stopSpeech();
+  applyPrefs();
+};
+function resizeText(change) {
+  prefs.size = parseInt($('size').textContent, 10) + change;
+  applyPrefs();
+}
+$('smaller').onclick = () => resizeText(-10);
+$('larger').onclick = () => resizeText(10);
+$('reset').onclick = () => { prefs = {...defaults}; stopSpeech(); applyPrefs(); };
+const barMenus = Array.from(document.querySelectorAll('.bar-menu'));
+barMenus.forEach(menu => {
+  menu.addEventListener('toggle', () => {
+    if (menu.open) barMenus.filter(other => other !== menu).forEach(other => { other.open = false; });
+  });
+  menu.addEventListener('keydown', event => {
+    if (event.key === 'Escape' && menu.open) {
+      menu.open = false;
+      menu.querySelector('summary').focus();
+    }
+  });
+});
+document.addEventListener('click', event => {
+  if (!event.target.closest('.bar-menu')) barMenus.forEach(menu => { menu.open = false; });
+});
+function loadVoices() {
+  voices = audio.getVoices().filter(voice => /^es(?:[-_]|$)/i.test(voice.lang));
+  const spanish = voices.filter(voice => /^es[-_]es$/i.test(voice.lang));
+  const ua = navigator.userAgent;
+  const isChrome = /Chrome|CriOS|Chromium/i.test(ua);
+  const isSafari = /Safari/i.test(ua) && !isChrome && !/FxiOS|EdgiOS/i.test(ua);
+  const google = voice => /google/i.test(voice.name);
+  preferredVoice = (isChrome && (spanish.find(google) || voices.find(google)))
+    || (isSafari && voices.find(voice => /m[oó]nica/i.test(voice.name)))
+    || spanish.find(voice => voice.default) || spanish[0] || voices.find(voice => voice.default) || voices[0];
+  const label = preferredVoice ? 'Predeterminada · ' + preferredVoice.name : 'Predeterminada';
+  $('voice').replaceChildren(new Option(label, ''));
+  voices.forEach(voice => $('voice').add(new Option(voice.name + ' · ' + voice.lang, voice.voiceURI)));
+  applyPrefs();
+}
+if (audio) {
+  loadVoices();
+  audio.addEventListener('voiceschanged', loadVoices);
+} else {
+  for (const key of ['listen','voice','rate']) $(key).disabled = true;
+  stopSpeech();
+}
+const narration = {
+  portada: 'Bienvenidos y bienvenidas a PAUSA. En esta tutoría vamos a hablar de cómo vivimos la presión cuando hay exámenes y a practicar qué podemos hacer cuando nos cuesta empezar, seguir o parar.',
+  presion: '¿Cómo te encuentras hoy? ¿Cuánta presión sientes hoy, del cero al diez? En el cero, apenas hay presión. En el diez, la presión ocupa casi todo.',
+  estres: 'En esta pantalla veremos cómo el estrés puede darnos un empujón para empezar y qué pasa cuando la presión se hace difícil de manejar.',
+  ansiedad: 'Antes de un examen, la incertidumbre puede llevarnos a imaginar lo que podría pasar. El bocadillo muestra dos preguntas que pueden venirnos a la cabeza.',
+  senales: 'Pero ¿cómo se puede notar el estrés? Puede que el corazón te vaya más rápido, que notes tensión en el cuerpo o un nudo en el estómago. A veces también cuesta concentrarse o recordar algo que ya habías estudiado. Lo que sientes en ese momento no predice cómo te irá.',
+  pensamientos: 'Hemos visto cómo se puede notar la presión en el cuerpo. Ahora vamos a fijarnos en lo que nos decimos cuando sentimos esa presión. A esas frases las llamamos pensamientos ocultos. Por ejemplo: «No me va a dar tiempo a estudiarlo todo». Estas frases pueden venirnos a la cabeza nada más abrir los apuntes, incluso antes de ponernos a estudiar.',
+  automaticos: 'Aquí vemos por qué algunas ideas aparecen sin que las elijamos y por qué pueden sonar tan convincentes.',
+  tarjetas: 'Vamos a ver tres pensamientos que nos pueden venir a la cabeza antes de un examen. En cada tarjeta veremos qué sabemos, qué estamos dando por hecho y qué podemos hacer. Abrid una tarjeta y pulsad Escuchar para oír su explicación.',
+  exigencia: 'En la diana, las flechas han dado casi en el centro. Y aparece esta frase: «Si no doy justo en el centro, no cuenta». Esa es una regla perfeccionista. Querer hacerlo bien puede orientar el esfuerzo. Pero si solo aceptamos que algo salga perfecto, puede costarnos empezar, avanzar o darlo por terminado. Vamos a ver la diferencia con un ejemplo.',
+  clasificar: 'Vamos a distinguir entre exigencia flexible y regla perfeccionista. Arrastrad cada frase a su sitio.',
+  bloqueos: 'Aquí hay tres tarjetas con pautas para el bloqueo antes, durante y después de un examen. Abrid la que queráis explorar.',
+  respirar: 'Después de ver qué podemos hacer cuando nos bloqueamos, vamos a probar una forma de hacer una pausa.',
+  pausa: 'Este círculo crece y se recoge para guiar una respiración suave. Elegid un minuto para clase o cinco para casa y pulsad Iniciar respiración. Podéis pausar cuando queráis.',
+  cierre: [
+    "Recuerda, no eres una nota. Una nota recoge el resultado de una tarea en unas condiciones muy concretas. Tu valor no depende de ese resultado.",
+    "Un paso. Piensa qué podrías probar si te atascas. Por ejemplo, durante el examen puedes pasar a una pregunta que sí sepas responder y volver después a la que te cuesta.",
+    "Un apoyo. Piensa con quién podrías hablar si necesitas ayuda. Por ejemplo, puedes pedirle a alguien de confianza que te ayude a organizarte o llevar una duda concreta a clase.",
+    "Empieza con un plan que puedas realizar. Elige dos tareas concretas y decide a qué hora harás cada una. Si te queda alguna duda, déjala escrita para que puedas retomarla o pedir ayuda.",
+    "Descansa y duerme. Intenta dormir de ocho a diez horas. Dormir bien ayuda a la atención y a la memoria.",
+  ],
+  recursos: 'Aquí tienes acceso a dos presentaciones. Una reúne diferentes técnicas de estudio. La otra incluye un organizador y planificador con calendario mensual, planificador semanal y agenda diaria.',
+  despedida: 'Para terminar, quédate con esta idea.'
+};
+const thoughtCards = Array.from($('tarjetas').querySelectorAll('details'));
+const narratedCards = [...thoughtCards, ...$('exigencia').querySelectorAll('.comparison details'), ...$('bloqueos').querySelectorAll('details'), ...$('pausa').querySelectorAll('details')];
+let openedCards = [];
+narratedCards.forEach(card => {
+  card.addEventListener('toggle', () => {
+    openedCards = openedCards.filter(item => item !== card);
+    if (card.open) openedCards.push(card);
+  });
+});
+$('listen').onclick = () => {
+  stopSpeech();
+  const run = speechRun;
+  const slide = slides[index];
+  const openCard = openedCards.slice().reverse().find(card => card.open && slide.contains(card))
+    || narratedCards.find(card => card.open && slide.contains(card));
+  const context = openCard
+    ? (slide.id === 'tarjetas' ? 'Tarjeta ' + (thoughtCards.indexOf(openCard) + 1) + '.' : '')
+    : narration[slide.id];
+  const introOnly = ['portada','presion','senales','pensamientos','cierre'].includes(slide.id) || (slide.id === 'bloqueos' && !openCard);
+  const parts = introOnly ? [] : Array.from((openCard || slide).querySelectorAll('h1,h2,h3,p,figcaption,summary,li,.sorting-bank button'))
+    .filter(element => element.getClientRects().length && !element.closest('.kicker,.perfection-intro,.resources-layout,#sort-title,#sortingHint,#sortingStatus,.sorting-target,#clock,#timerStatus,#t6,#t7,#farewell-signature,#breathPhase,#pausa details:not([open])')
+      && (element.matches('summary') || !element.closest('details:not([open])')))
+    .map(element => (element.querySelector('.thought-quote') || element).textContent.trim()).filter(Boolean);
+  if (context) parts.unshift(...(Array.isArray(context) ? context : [context]));
+  const voice = voices.find(option => option.voiceURI === $('voice').value) || preferredVoice;
+  let position = 0;
+  function readNext() {
+    if (run !== speechRun) return;
+    if (position === parts.length) { stopSpeech('Lectura finalizada.'); return; }
+    utterance = new SpeechSynthesisUtterance(parts[position++]);
+    utterance.lang = voice?.lang || 'es-ES';
+    utterance.rate = Number($('rate').value);
+    if (voice) utterance.voice = voice;
+    utterance.onend = readNext;
+    utterance.onerror = () => { if (run === speechRun) stopSpeech('No se pudo reproducir la lectura. Prueba otra voz del dispositivo.'); };
+    audio.speak(utterance);
+  }
+  $('stop').disabled = false;
+  $('audioStatus').textContent = index === 0 ? 'Leyendo la portada.' : 'Leyendo la sección ' + sectionNumber() + '.';
+  readNext();
+};
+$('stop').onclick = () => stopSpeech('Lectura detenida.');
+
+const pressureColors = [
+  '#e2f5ed', '#e9f5e9', '#f1f6e5', '#f9f5df', '#fff2d8',
+  '#ffebce', '#ffe3c9', '#ffdac7', '#ffd0c5', '#ffc2bf', '#ffaaa8'
+];
+function updatePressure() {
+  const value = $('scale').value;
+  const atMaximum = value === '10';
+  $('pressureValue').textContent = value;
+  $('pressureMeter').style.setProperty('--pressure-fill', pressureColors[Number(value)]);
+  $('pressureMeter').classList.toggle('pressure-hot', atMaximum);
+  $('pressureFlame').toggleAttribute('hidden', !atMaximum);
+  $('pressurePause').hidden = !atMaximum;
+  $('scale').setAttribute('aria-describedby', 'pressureHint' + (atMaximum ? ' pressurePause' : ''));
+}
+$('scale').oninput = updatePressure;
+updatePressure();
+
+const sortingBank = $('sortingBank');
+const sortingCards = Array.from(sortingBank.querySelectorAll('button'));
+const sortingTargets = Array.from(document.querySelectorAll('.sorting-target'));
+let selectedCard;
+function selectCard(card) {
+  selectedCard = card;
+  sortingCards.forEach(item => item.setAttribute('aria-pressed', String(item === card)));
+}
+let sortingAudio;
+async function playSortingCue() {
+  try {
+    const Audio = window.AudioContext || window.webkitAudioContext;
+    if (!Audio) return;
+    sortingAudio ??= new Audio();
+    if (sortingAudio.state !== 'running') await sortingAudio.resume();
+    const tone = sortingAudio.createOscillator();
+    const volume = sortingAudio.createGain();
+    const now = sortingAudio.currentTime;
+    tone.frequency.setValueAtTime(300, now);
+    tone.frequency.exponentialRampToValueAtTime(180, now + .16);
+    volume.gain.setValueAtTime(.09, now);
+    volume.gain.exponentialRampToValueAtTime(.001, now + .18);
+    tone.connect(volume);
+    volume.connect(sortingAudio.destination);
+    tone.start(now);
+    tone.stop(now + .19);
+  } catch {}
+}
+function placeCard(target) {
+  if (!selectedCard) {
+    $('sortingStatus').textContent = 'Elegid primero una frase.';
+    return;
+  }
+  const reason = selectedCard.dataset.reason;
+  if (selectedCard.dataset.answer !== target.dataset.category) {
+    $('sortingStatus').textContent = 'Probad la otra categoría. ' + reason;
+    playSortingCue();
+    return;
+  }
+  const item = document.createElement('li');
+  item.textContent = selectedCard.textContent;
+  target.querySelector('ul').append(item);
+  selectedCard.hidden = true;
+  selectCard(null);
+  const nextCard = sortingCards.find(card => !card.hidden);
+  (nextCard || target.querySelector('button')).focus({preventScroll:true});
+  $('sortingStatus').textContent = reason;
+}
+sortingTargets.forEach(target => {
+  target.querySelector('button').onclick = () => placeCard(target);
+});
+sortingCards.forEach(card => {
+  let start;
+  let dragged = false;
+  card.onclick = () => {
+    if (!dragged) {
+      selectCard(card);
+      $('sortingStatus').textContent = 'Frase seleccionada. Elegid una categoría.';
+    }
+    dragged = false;
+  };
+  card.onpointerdown = event => {
+    if (!event.isPrimary || event.button !== 0) return;
+    dragged = false;
+    start = {x:event.clientX,y:event.clientY};
+    card.setPointerCapture(event.pointerId);
+  };
+  card.onpointermove = event => {
+    if (!start || !event.isPrimary) return;
+    const x = event.clientX - start.x;
+    const y = event.clientY - start.y;
+    if (!dragged && Math.hypot(x,y) < 8) return;
+    dragged = true;
+    card.classList.add('dragging');
+    card.style.transform = 'translate(' + x + 'px,' + y + 'px)';
+  };
+  card.onpointerup = event => {
+    if (!start || !event.isPrimary) return;
+    start = null;
+    card.classList.remove('dragging');
+    card.style.transform = '';
+    if (!dragged) return;
+    const target = document.elementFromPoint(event.clientX,event.clientY)?.closest('.sorting-target');
+    selectCard(card);
+    if (target) placeCard(target);
+  };
+  card.onpointercancel = () => {
+    start = null;
+    dragged = false;
+    card.classList.remove('dragging');
+    card.style.transform = '';
+  };
+});
+
+
+const duration = () => Number($('duration').value);
+let remaining = duration() * 1000;
+let deadline = 0;
+let ticker;
+const disc = $('breathDisc');
+function drawTimer() {
+  const elapsed = duration() * 1000 - remaining;
+  const phase = elapsed % 8000;
+  const scale = remaining ? .48 + .26 * (1 - Math.cos(phase * Math.PI / 4000)) : .48;
+  disc.style.setProperty('--breath-scale', scale);
+  $('breathPhase').textContent = ticker ? (phase < 4000 ? 'Inspira suave' : 'Suelta el aire') : (remaining > 0 && elapsed > 0 ? 'En pausa' : 'Cuando quieras');
+  const seconds = Math.ceil(remaining / 1000);
+  $('clock').textContent = Math.floor(seconds / 60) + ':' + String(seconds % 60).padStart(2,'0');
+  $('startTimer').textContent = ticker ? 'Pausar' : remaining > 0 && elapsed > 0 ? 'Continuar respiración' : 'Iniciar respiración';
+}
+function pauseTimer() {
+  if (!ticker) return;
+  remaining = Math.max(0, deadline - Date.now());
+  clearInterval(ticker);
+  ticker = null;
+  drawTimer();
+  $('timerStatus').textContent = remaining ? 'Temporizador en pausa.' : 'La pausa ha terminado.';
+}
+$('startTimer').onclick = () => {
+  if (ticker) { pauseTimer(); return; }
+  if (!remaining) remaining = duration() * 1000;
+  deadline = Date.now() + remaining;
+  ticker = setInterval(() => {
+    remaining = Math.max(0, deadline - Date.now());
+    if (!remaining) pauseTimer();
+    else drawTimer();
+  }, 100);
+  $('timerStatus').textContent = 'Pausa en marcha.';
+  drawTimer();
+};
+function resetTimer() {
+  pauseTimer();
+  remaining = duration() * 1000;
+  $('timerStatus').textContent = 'Temporizador listo.';
+  drawTimer();
+}
+$('resetTimer').onclick = resetTimer;
+$('duration').onchange = resetTimer;
+let closedForPrint;
+window.addEventListener('beforeprint', () => {
+  if (closedForPrint) return;
+  closedForPrint = Array.from(document.querySelectorAll('details:not([open])'));
+  closedForPrint.forEach(detail => { detail.open = true; });
+});
+window.addEventListener('afterprint', () => {
+  closedForPrint?.forEach(detail => { detail.open = false; });
+  closedForPrint = null;
+});
+$('print').onclick = () => window.print();
+applyPrefs();
+show(false);
+</script>
+</body>
+</html>
